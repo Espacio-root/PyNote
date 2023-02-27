@@ -2,3 +2,4 @@ venv/
 temp/
 cache/
 test.py
+data.json
