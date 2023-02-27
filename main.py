@@ -21,7 +21,7 @@ class Notes:
             self.store('Path', self.args.default_path)
 
         if folder_path == '':
-            
+
             if self.args.path:
                 self.folder_path = self.args.path
 
@@ -72,7 +72,7 @@ class Notes:
             cur = 1
 
         im.save(fr'{self.folder_path}\{cur}.png')
-        print(f'Stored {cur}.png at path ...{self.partial_path()}')
+        print(f'\033[1;32m Stored {cur}.png at path .../{self.partial_path()}')
 
     def delete(self):
         if not os.path.exists(self.folder_path):
@@ -87,7 +87,7 @@ class Notes:
         sorted_file_list = sorted(file_list, key=lambda x: os.path.getmtime(os.path.join(self.folder_path, x)))
         os.remove(os.path.join(self.folder_path, sorted_file_list[-1]))
 
-        print(f'Removed {sorted_file_list[-1]} from path ...{self.partial_path()}')
+        print(f'\033[91m Removed {sorted_file_list[-1]} from path .../{self.partial_path()}')
 
     def playaudio(self, file):
         try:
