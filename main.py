@@ -60,7 +60,7 @@ class Notes:
 
         if os.path.exists(self.folder_path):
             try: 
-                cur = int([elem for elem in sorted(os.listdir(self.folder_path), key= lambda x: x.split('.')[0]) if elem.endswith('png')][-1].split('.')[0]) + 1
+                cur = int([elem for elem in sorted(os.listdir(self.folder_path), key= lambda x: int(x.split('.')[0])) if elem.endswith('png')][-1].split('.')[0]) + 1
             except: cur = 1
         else:
             os.makedirs(self.folder_path)
