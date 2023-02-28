@@ -47,7 +47,6 @@ class Notes:
         else:
             self.folder_path = folder_path
         self.store('Last_Path', self.folder_path)
-        self.store('Last_Path', self.folder_path)
         self.partial_path = self.set_partial_path()
 
         print(Notes.colored(f'Current Path: {self.folder_path}', 'blue'))
