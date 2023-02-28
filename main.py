@@ -16,12 +16,17 @@ class Notes:
         parser.add_argument("--default-path", default=False)
         parser.add_argument("--audio-on", default=False, action="store_true")
         parser.add_argument("--last-path", default=False, action="store_true")
+        parser.add_argument("--path-offset", default=False)
         self.args = parser.parse_args()
 
         if self.args.default_path:
             self.store('Path', self.args.default_path)
 
-        if folder_path == '':
+        if self.args.path_offset:
+            temp_path = json.load(open('data.json', 'r'))['Path']
+            self.folder_path = f'{temp_path}\\{self.args.path_offset}'
+
+        elif folder_path == '':
 
             if self.args.path:
                 self.folder_path = self.args.path
@@ -37,11 +42,12 @@ class Notes:
             else:
                 cur_dir = os.getcwd()
                 self.folder_path = fr'{cur_dir}\cache\{str(datetime.now().strftime("%d-%m-%Y-%H-%M-%S"))}'
-                print(f'\033[91m Path was not specified, hence files are being cached at {self.folder_path}')
+                print(Notes.colored(f'Path was not specified, hence files are being cached at {self.folder_path}', 'red'))
 
         else:
             self.folder_path = folder_path
         self.store('Last_Path', self.folder_path)
+        print(Notes.colored(f'Current Path: {self.folder_path}', 'blue'))
 
     def partial_path(self):
         
@@ -80,22 +86,26 @@ class Notes:
             cur = 1
 
         im.save(fr'{self.folder_path}\{cur}.png')
-        print(f'\033[1;32m Stored {cur}.png at path ...{self.partial_path()}')
+        print(Notes.colored(f'Stored {cur}.png at path ...{self.partial_path()} {Notes.time()}', 'green'))
 
     def delete(self):
         if not os.path.exists(self.folder_path):
-            print(f'\033[91m Path does not exist.. Take a screenshot to initiate the path...')
+            print(Notes.colored(f'Path does not exist.. Take a screenshot to initiate the path...', 'red'))
             return False
 
         if len(os.listdir(self.folder_path)) == 0:
-            print(f'\033[91m Path does not have any file.. Take a screenshot to initiate the path...')
+            print(Notes.colored(f'Path does not have any file.. Take a screenshot to initiate the path...', 'red'))
             return False
         
         file_list = os.listdir(self.folder_path)
         sorted_file_list = sorted(file_list, key=lambda x: os.path.getmtime(os.path.join(self.folder_path, x)))
-        os.remove(os.path.join(self.folder_path, sorted_file_list[-1]))
 
-        print(f'\033[1;32m Removed {sorted_file_list[-1]} from path ...{self.partial_path()}')
+        try:
+            os.remove(os.path.join(self.folder_path, sorted_file_list[-1]))
+        except Exception as e:
+            print(Notes.colored(e, 'red'))
+
+        print(Notes.colored(f'Removed {sorted_file_list[-1]} from path ...{self.partial_path()} {Notes.time()}', 'green'))
 
     def playaudio(self, file):
         try:
@@ -116,10 +126,28 @@ class Notes:
             self.folder_path = input('Please enter the desired path: ')
             self.store('Last_Path', self.folder_path)
 
-            print(f'\033[1;32m Folder path successfully switched to {self.folder_path}...')
+            print(Notes.colored(f'Folder path successfully switched to {self.folder_path}... {Notes.time()}', 'green'))
 
         elif keyboard.is_pressed(('ctrl', 'shift', 'c')):
             os._exit(0)
+
+    @staticmethod
+    def time():
+        return f'({datetime.now().strftime("%H:%M:%S")})'
+    
+    @staticmethod
+    def colored(s, color):
+        if color == 'green':
+            return f'\033[1;32m {s} \033[0m'
+        
+        elif color == 'red':
+            return f'\033[91m {s} \033[0m'
+        
+        elif color == 'blue':
+            return f'\033[34m {s} \033[0m'
+        
+        else:
+            return s
 
 
 if __name__ == '__main__':
