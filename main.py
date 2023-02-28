@@ -47,9 +47,18 @@ class Notes:
         else:
             self.folder_path = folder_path
         self.store('Last_Path', self.folder_path)
+        self.partial_path = self.set_partial_path()
+
         print(Notes.colored(f'Current Path: {self.folder_path}', 'blue'))
 
-    def partial_path(self):
+    def set_partial_path(self):
+
+        try:
+            temp_path = json.load(open('data.json', 'r'))['Path']
+            if temp_path.split('\\')[-1] in self.folder_path:
+                return self.folder_path.split(temp_path.split('\\')[-1])[-1]
+        except:
+            pass
         
         if os.getcwd().split('\\')[-1] in self.folder_path:
             return self.folder_path.split(os.getcwd().split('\\')[-1])[-1]
@@ -86,7 +95,7 @@ class Notes:
             cur = 1
 
         im.save(fr'{self.folder_path}\{cur}.png')
-        print(Notes.colored(f'Stored {cur}.png at path ...{self.partial_path()} {Notes.time()}', 'green'))
+        print(Notes.colored(f'Stored {cur}.png at path ...{self.partial_path} {Notes.time()}', 'green'))
 
     def delete(self):
         if not os.path.exists(self.folder_path):
@@ -105,7 +114,7 @@ class Notes:
         except Exception as e:
             print(Notes.colored(e, 'red'))
 
-        print(Notes.colored(f'Removed {sorted_file_list[-1]} from path ...{self.partial_path()} {Notes.time()}', 'green'))
+        print(Notes.colored(f'Removed {sorted_file_list[-1]} from path ...{self.partial_path} {Notes.time()}', 'green'))
 
     def playaudio(self, file):
         try:
@@ -127,6 +136,7 @@ class Notes:
             self.store('Last_Path', self.folder_path)
 
             print(Notes.colored(f'Folder path successfully switched to {self.folder_path}... {Notes.time()}', 'green'))
+            self.partial_path = self.set_partial_path()
 
         elif keyboard.is_pressed(('ctrl', 'shift', 'c')):
             os._exit(0)
