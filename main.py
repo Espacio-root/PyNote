@@ -114,7 +114,7 @@ class Notes:
         except Exception as e:
             print(Notes.colored(e, 'red'))
 
-        print(Notes.colored(f'Removed {sorted_file_list[-1]} from path ...{self.partial_path} {Notes.time()}', 'green'))
+        print(Notes.colored(f'Removed {sorted_file_list[-1]} from path ...{self.partial_path} {Notes.time()}', 'red'))
 
     def playaudio(self, file):
         try:
