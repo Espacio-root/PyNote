@@ -7,4 +7,6 @@ It takes 3 optional arguments
 
 --last-path : Stores any new data in its last used directory. Overrides --default-path
 
+--path-offset : Offset the path from default-path instead of writing down the entire path
+
 --audio-on: [Experimental] A sound effect is played after each action
