@@ -1,10 +1,11 @@
+import argparse
 from datetime import datetime
 import json
+import keyboard
 import os
 from PIL import ImageGrab
-from playsound import playsound
 from pynput.keyboard import Listener, Key
-import argparse
+import re
 
 class Notes:
 
@@ -36,7 +37,7 @@ class Notes:
             else:
                 cur_dir = os.getcwd()
                 self.folder_path = fr'{cur_dir}\cache\{str(datetime.now().strftime("%d-%m-%Y-%H-%M-%S"))}'
-                print(f'Path was not specified, hence files are being cached at {self.folder_path}')
+                print(f'\033[91m Path was not specified, hence files are being cached at {self.folder_path}')
 
         else:
             self.folder_path = folder_path
@@ -50,6 +51,9 @@ class Notes:
             return self.folder_path.split("\\")[-1]
 
     def store(self, key, value):
+        
+        value = value.replace('/', '\\')
+        value = fr'{value}'
 
         if os.path.exists('data.json'):
             with open('data.json', 'r') as fp:
@@ -64,34 +68,38 @@ class Notes:
         im = ImageGrab.grab()
 
         if os.path.exists(self.folder_path):
+
             try: 
-                cur = int([elem for elem in sorted(os.listdir(self.folder_path), key= lambda x: int(x.split('.')[0])) if elem.endswith('png')][-1].split('.')[0]) + 1
+                filenames = [f for f in os.listdir(self.folder_path) if re.match(r"\d+\.png", f)]
+                cur = max([int(re.search(r"\d+", f).group()) for f in filenames]) + 1
+
             except: cur = 1
+
         else:
             os.makedirs(self.folder_path)
             cur = 1
 
         im.save(fr'{self.folder_path}\{cur}.png')
-        print(f'\033[1;32m Stored {cur}.png at path .../{self.partial_path()}')
+        print(f'\033[1;32m Stored {cur}.png at path ...{self.partial_path()}')
 
     def delete(self):
         if not os.path.exists(self.folder_path):
-            print(f'Path does not exist.. Take a screenshot to initiate the path...')
+            print(f'\033[91m Path does not exist.. Take a screenshot to initiate the path...')
             return False
 
         if len(os.listdir(self.folder_path)) == 0:
-            print(f'Path does not have any file.. Take a screenshot to initiate the path...')
+            print(f'\033[91m Path does not have any file.. Take a screenshot to initiate the path...')
             return False
         
         file_list = os.listdir(self.folder_path)
         sorted_file_list = sorted(file_list, key=lambda x: os.path.getmtime(os.path.join(self.folder_path, x)))
         os.remove(os.path.join(self.folder_path, sorted_file_list[-1]))
 
-        print(f'\033[91m Removed {sorted_file_list[-1]} from path .../{self.partial_path()}')
+        print(f'\033[1;32m Removed {sorted_file_list[-1]} from path ...{self.partial_path()}')
 
     def playaudio(self, file):
         try:
-            playsound(fr'{os.getcwd()}\assets\audio\{file}.mp3')
+            pass
         except:
             pass
 
@@ -108,7 +116,10 @@ class Notes:
             self.folder_path = input('Please enter the desired path: ')
             self.store('Last_Path', self.folder_path)
 
-            print(f'Folder path successfully switched to {self.folder_path}...')
+            print(f'\033[1;32m Folder path successfully switched to {self.folder_path}...')
+
+        elif keyboard.is_pressed(('ctrl', 'shift', 'c')):
+            os._exit(0)
 
 
 if __name__ == '__main__':
