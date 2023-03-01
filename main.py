@@ -116,6 +116,17 @@ class Notes:
 
         print(Notes.colored(f'Removed {sorted_file_list[-1]} from path ...{self.partial_path} {Notes.time()}', 'red'))
 
+    def update_path(self, path:str):
+
+        if path.startswith('\\'):
+            
+            temp_path = json.load(open('data.json', 'r'))['Path']
+            self.folder_path = f'{temp_path}\\{self.args.path_offset}'
+
+        else: self.folder_path = path
+
+        self.store('Last_Path', self.folder_path)
+
     def playaudio(self, file):
         try:
             pass
@@ -123,22 +134,27 @@ class Notes:
             pass
 
     def on_press(self, key):
+
         if key == Key.f2:
+
             self.screenshot()
             if self.args.audio_on: self.playaudio('effect-1')
 
         elif key == Key.f4:
+
             self.delete()
             if self.args.audio_on: self.playaudio('effect-1')
 
         elif key == Key.f7:
-            self.folder_path = input('Please enter the desired path: ')
-            self.store('Last_Path', self.folder_path)
+
+            self.update_path(input('Please Enter The Desired Path: '))
 
             print(Notes.colored(f'Folder path successfully switched to {self.folder_path}... {Notes.time()}', 'green'))
             self.partial_path = self.set_partial_path()
 
         elif keyboard.is_pressed(('ctrl', 'shift', 'c')):
+
+            print(Notes.colored(f'Exiting with exit-code 0!', 'red'))
             os._exit(0)
 
     @staticmethod
