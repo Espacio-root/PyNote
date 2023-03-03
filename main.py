@@ -121,7 +121,7 @@ class Notes:
         if path.startswith('\\'):
             
             temp_path = json.load(open('data.json', 'r'))['Path']
-            self.folder_path = f'{temp_path}\\{self.args.path_offset}'
+            self.folder_path = f'{temp_path}{path}'
 
         else: self.folder_path = path
 
@@ -149,7 +149,7 @@ class Notes:
 
             self.update_path(input('Please Enter The Desired Path: '))
 
-            print(Notes.colored(f'Folder path successfully switched to {self.folder_path}... {Notes.time()}', 'green'))
+            print(Notes.colored(f'Folder path successfully switched to {self.folder_path}... {Notes.time()}', 'blue'))
             self.partial_path = self.set_partial_path()
 
         elif keyboard.is_pressed(('ctrl', 'shift', 'c')):
