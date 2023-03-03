@@ -6,6 +6,7 @@ import os
 from PIL import ImageGrab
 from pynput.keyboard import Listener, Key
 import re
+import visualize
 
 class Notes:
 
@@ -151,6 +152,10 @@ class Notes:
 
             print(Notes.colored(f'Folder path successfully switched to {self.folder_path}... {Notes.time()}', 'blue'))
             self.partial_path = self.set_partial_path()
+
+        elif key == Key.f8:
+
+            visualize.main()
 
         elif keyboard.is_pressed(('ctrl', 'shift', 'c')):
 

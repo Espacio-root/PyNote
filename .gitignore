@@ -4,3 +4,4 @@ cache/
 test.py
 data.json
 Notes/
+__pycache__/
