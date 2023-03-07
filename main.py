@@ -13,24 +13,24 @@ class Notes:
     def __init__(self, folder_path='') -> None:
 
         parser = argparse.ArgumentParser()
-        parser.add_argument("--path", default=False)
+        parser.add_argument("-p", "--path", default=False)
         parser.add_argument("--default-path", default=False)
         parser.add_argument("--audio-on", default=False, action="store_true")
-        parser.add_argument("--last-path", default=False, action="store_true")
-        parser.add_argument("--path-offset", default=False)
+        parser.add_argument("-l", "--last-path", default=False, action="store_true")
         self.args = parser.parse_args()
 
         if self.args.default_path:
             self.store('Path', self.args.default_path)
 
-        if self.args.path_offset:
-            temp_path = json.load(open('data.json', 'r'))['Path']
-            self.folder_path = f'{temp_path}\\{self.args.path_offset}'
-
         elif folder_path == '':
 
             if self.args.path:
-                self.folder_path = self.args.path
+
+                if self.args.path.startswith('\\'):
+                    temp_path = json.load(open('data.json', 'r'))['Path']
+                    self.folder_path = f'{temp_path}{self.args.path}'
+
+                else: self.folder_path = self.args.path
 
             elif self.args.last_path:
                 with open('data.json', 'r') as fp:
